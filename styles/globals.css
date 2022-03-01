@@ -1,16 +1,15 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.blog-post-content h1 {
+  @apply text-red-500 mb-5;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.blog-post-content p {
+  @apply mb-1 text-gray-600;
 }
 
-* {
-  box-sizing: border-box;
+.blog-post-content ul {
+  @apply pl-10 list-disc;
 }
