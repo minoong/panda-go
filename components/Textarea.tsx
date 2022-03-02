@@ -1,10 +1,9 @@
+import {TextareaHTMLAttributes} from 'react';
 import {UseFormRegisterReturn} from 'react-hook-form';
 
-interface TextareaProps {
+interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
  label?: string;
- name?: string;
  register: UseFormRegisterReturn;
- [key: string]: any;
 }
 
 export default function Textarea({label, name, register, ...rest}: TextareaProps) {
