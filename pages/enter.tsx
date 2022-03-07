@@ -1,5 +1,6 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
+import OTPInput from '@components/OTPInput';
 import useMutation from '@libs/client/useMutation';
 import {cls} from '@libs/utils';
 import {API} from 'constatns';
@@ -32,7 +33,7 @@ const Enter: NextPage = () => {
  const [enter, {loading, data, error}] = useMutation<MutationResult>(API.ENTER);
  const [confirmToken, {loading: tokenLoading, data: tokenData}] = useMutation<MutationResult>(API.CONFIRM);
  const {register, handleSubmit, reset} = useForm<EnterForm>();
- const {register: tokenRegister, handleSubmit: tokenHandleSubmit} = useForm<TokenForm>();
+ const {register: tokenRegister, handleSubmit: tokenHandleSubmit, setValue: setTokenValue} = useForm<TokenForm>();
  const [method, setMethod] = useState<'email' | 'phone'>('email');
 
  const onEmailClick = useCallback(() => {
@@ -82,15 +83,17 @@ const Enter: NextPage = () => {
        name="token"
        label="Confirmation Token"
        type="number"
+       className="hidden"
        required
       />
+      <OTPInput autoFocus isNumberInput length={4} className="otpContainer" inputClassName="otpInput" onChangeOTP={(otp) => setTokenValue('token', otp)} />
       <Button text={tokenLoading ? 'Loading' : 'Confirm Token'} />
      </form>
     ) : (
      <>
       <div className="flex flex-col items-center">
        <h5 className="text-sm text-gray-500 font-medium">Enter using:</h5>
-       <div className="grid border-b  w-full mt-8 grid-cols-2 ">
+       <div className="grid border-b  w-full mt-8 grid-cols-2">
         <button
          className={cls(
           'pb-4 font-medium text-sm border-b-2',
@@ -136,7 +139,6 @@ const Enter: NextPage = () => {
       </form>
      </>
     )}
-
     <div className="mt-8">
      <div className="relative">
       <div className="absolute w-full border-t border-gray-300" />
