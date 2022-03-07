@@ -1,12 +1,13 @@
 import {LinkProps} from 'next/link';
+import {InputHTMLAttributes} from 'react';
 import type {UseFormRegisterReturn} from 'react-hook-form';
-interface InputProps extends Partial<HTMLInputElement> {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
  label: string;
  kind?: 'text' | 'phone' | 'price';
  register: UseFormRegisterReturn;
 }
 
-export default function Input({label, name, kind = 'text', register, required, type}: InputProps) {
+export default function Input({label, name, kind = 'text', register, required, type, ...rest}: InputProps) {
  return (
   <div>
    <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor={name}>
@@ -20,6 +21,7 @@ export default function Input({label, name, kind = 'text', register, required, t
       {...register}
       type={type}
       className="appearance-none w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+      {...rest}
      />
     </div>
    ) : null}
@@ -34,6 +36,7 @@ export default function Input({label, name, kind = 'text', register, required, t
       {...register}
       type={type}
       className="appearance-none pl-7 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+      {...rest}
      />
      <div className="absolute right-0 pointer-events-none pr-3 flex items-center">
       <span className="text-gray-500">KRW</span>
@@ -51,6 +54,7 @@ export default function Input({label, name, kind = 'text', register, required, t
       {...register}
       type={type}
       className="appearance-none w-full px-3 py-2 border border-gray-300 rounded-md rounded-l-none shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+      {...rest}
      />
     </div>
    ) : null}
