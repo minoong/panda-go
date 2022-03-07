@@ -86,7 +86,7 @@ const Enter: NextPage = () => {
        className="hidden"
        required
       />
-      <OTPInput autoFocus isNumberInput length={4} className="otpContainer" inputClassName="otpInput" onChangeOTP={(otp) => setTokenValue('token', otp)} />
+      <OTPInput autoFocus isNumberInput length={6} className="otpContainer" inputClassName="otpInput" onChangeOTP={(otp) => setTokenValue('token', otp)} />
       <Button text={tokenLoading ? 'Loading' : 'Confirm Token'} />
      </form>
     ) : (
