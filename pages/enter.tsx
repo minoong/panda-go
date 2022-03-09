@@ -87,7 +87,7 @@ const Enter: NextPage = () => {
        required
       />
       <OTPInput autoFocus isNumberInput length={6} className="otpContainer" inputClassName="otpInput" onChangeOTP={(otp) => setTokenValue('token', otp)} />
-      <Button text={tokenLoading ? 'Loading' : 'Confirm Token'} />
+      <Button text={tokenLoading ? 'Loading' : 'Confirm Token'} isLoading={tokenLoading} />
      </form>
     ) : (
      <>
@@ -134,8 +134,8 @@ const Enter: NextPage = () => {
          <Input register={register('phone')} name="phone" label="Phone number" type="number" kind="phone" required />
         </>
        ) : null}
-       {method === 'email' ? <Button text={loading ? 'Loading' : 'Get login link'} /> : null}
-       {method === 'phone' ? <Button text={loading ? 'Loading' : 'Get one-time password'} /> : null}
+       {method === 'email' ? <Button text={loading ? 'Loading' : 'Get login link'} isLoading={loading} /> : null}
+       {method === 'phone' ? <Button text={loading ? 'Loading' : 'Get one-time password'} isLoading={loading} /> : null}
       </form>
      </>
     )}
