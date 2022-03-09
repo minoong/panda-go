@@ -19,7 +19,7 @@ export default function Layout({title, canGoBack, hasTabBar, children, seoTitle}
  return (
   <div>
    <Head>
-    <title>{seoTitle} | Pando-go</title>
+    <title>{seoTitle || title} | Pando-go</title>
    </Head>
    <div className="bg-white w-full h-12 max-w-xl justify-center text-lg px-10 font-medium  fixed text-gray-800 border-b top-0  flex items-center">
     {canGoBack && (
@@ -45,6 +45,14 @@ export default function Layout({title, canGoBack, hasTabBar, children, seoTitle}
         ></path>
        </svg>
        <span>홈</span>
+      </a>
+     </ActiveLink>
+     <ActiveLink activeClassName="text-orange-500" defaultClassName="hover:text-gray-500 transition-colors" href="/profile">
+      <a className={cls('flex flex-col items-center space-y-2')}>
+       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+       </svg>
+       <span>나의 판다</span>
       </a>
      </ActiveLink>
     </nav>
