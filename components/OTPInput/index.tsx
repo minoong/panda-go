@@ -161,7 +161,7 @@ export function OTPInputComponent(props: OTPInputProps) {
  );
 
  return (
-  <div {...rest} className={`grid border-b w-full mt-8 gap-10 grid-cols-${length}`}>
+  <div {...rest} className={`grid grid-cols-${length} gap-4 border-b-2 pb-3`}>
    {Array(length)
     .fill('')
     .map((_, index) => (
@@ -177,7 +177,7 @@ export function OTPInputComponent(props: OTPInputProps) {
       onBlur={onBlur}
       onPaste={handleOnPaste}
       style={inputStyle}
-      className={inputClassName}
+      className={`${inputClassName}`}
       disabled={disabled}
      />
     ))}
