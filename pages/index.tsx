@@ -23,7 +23,7 @@ const Home: NextPage = () => {
     <title>Home</title>
    </Head>
    <div className="flex flex-col space-y-5 divide-y">
-    <div>test</div>
+    <div>test!</div>
    </div>
   </Layout>
  );

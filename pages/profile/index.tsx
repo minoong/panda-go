@@ -1,17 +1,13 @@
 import Layout from '@components/layout';
+import useUser from '@libs/client/useUser';
 import {cls} from '@libs/utils';
 import {Review, User} from '@prisma/client';
 import {NextPage} from 'next';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import Link from 'next/link';
 import {Suspense} from 'react';
 import useSWR, {SWRConfig} from 'swr';
-
-const Bs = dynamic(
- //@ts-ignore
- () => new Promise((resolve) => setTimeout(() => resolve(import('@components/bs')), 3000)),
- {ssr: false, loading: () => <span>loading</span>},
-);
 
 interface ReviewWithUser extends Review {
  createdBy: User;
@@ -58,13 +54,32 @@ const Reviews = () => {
  );
 };
 
+const MiniProfile = () => {
+ const {user} = useUser();
+
+ return (
+  <div className="flex items-center mt-4 space-x-3">
+   {user?.avatar ? (
+    <Image src={`https://imagedelivery.net/aSbksvJjax-AUC7qVnaC4A/${user?.avatar}/avatar`} className="w-16 h-16 bg-slate-500 rounded-full" alt={user.name} />
+   ) : (
+    <div className="w-16 h-16 bg-slate-500 rounded-full" />
+   )}
+   <div className="flex flex-col">
+    <span className="font-medium text-gray-900">{user?.name}</span>
+    <Link href="/profile/edit">
+     <a className="text-sm text-gray-700">Edit profile &rarr;</a>
+    </Link>
+   </div>
+  </div>
+ );
+};
+
 const Profile: NextPage = () => {
  return (
   <Layout hasTabBar title="나의 판다">
    <div className="px-4">
     <Suspense fallback="Loading Mini Profile">
-     <Bs />
-     {/* <MiniProfile /> */}
+     <MiniProfile />
     </Suspense>
     <div className="mt-10 flex justify-around">
      <Link href="/profile/sold">

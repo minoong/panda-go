@@ -161,26 +161,28 @@ export function OTPInputComponent(props: OTPInputProps) {
  );
 
  return (
-  <div {...rest} className={`grid grid-cols-${length} gap-4 border-b-2 pb-3`}>
-   {Array(length)
-    .fill('')
-    .map((_, index) => (
-     <SingleInput
-      key={`SingleInput-${index}`}
-      type={isNumberInput ? 'number' : 'text'}
-      focus={activeInput === index}
-      value={otpValues && otpValues[index]}
-      autoFocus={autoFocus}
-      onFocus={handleOnFocus(index)}
-      onChange={handleOnChange}
-      onKeyDown={handleOnKeyDown}
-      onBlur={onBlur}
-      onPaste={handleOnPaste}
-      style={inputStyle}
-      className={`${inputClassName}`}
-      disabled={disabled}
-     />
-    ))}
+  <div className="relative">
+   <div {...rest} className={`grid grid-cols-${length} gap-3`}>
+    {Array(length)
+     .fill('')
+     .map((_, index) => (
+      <SingleInput
+       key={`SingleInput-${index}`}
+       type={isNumberInput ? 'number' : 'text'}
+       focus={activeInput === index}
+       value={otpValues && otpValues[index]}
+       autoFocus={autoFocus}
+       onFocus={handleOnFocus(index)}
+       onChange={handleOnChange}
+       onKeyDown={handleOnKeyDown}
+       onBlur={onBlur}
+       onPaste={handleOnPaste}
+       style={inputStyle}
+       className={`${inputClassName}`}
+       disabled={disabled}
+      />
+     ))}
+   </div>
   </div>
  );
 }
