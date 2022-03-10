@@ -3,7 +3,6 @@ import useUser from '@libs/client/useUser';
 import {cls} from '@libs/utils';
 import {Review, User} from '@prisma/client';
 import {NextPage} from 'next';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import {Suspense} from 'react';
@@ -64,10 +63,10 @@ const MiniProfile = () => {
    ) : (
     <div className="w-16 h-16 bg-slate-500 rounded-full" />
    )}
-   <div className="flex flex-col">
+   <div className="flex flex-1 flex-row justify-between items-center w-full">
     <span className="font-medium text-gray-900">{user?.name}</span>
     <Link href="/profile/edit">
-     <a className="text-sm text-gray-700">Edit profile &rarr;</a>
+     <a className="text-sm text-gray-700">&rarr;</a>
     </Link>
    </div>
   </div>

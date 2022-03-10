@@ -162,7 +162,7 @@ export function OTPInputComponent(props: OTPInputProps) {
 
  return (
   <div className="relative">
-   <div {...rest} className={`grid grid-cols-${length} gap-3`}>
+   <div {...rest} className={`grid grid-cols-6 gap-3`}>
     {Array(length)
      .fill('')
      .map((_, index) => (
