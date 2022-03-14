@@ -7,7 +7,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  isLoading?: boolean;
 }
 
-export default function Button({large = false, onClick, text, isLoading = false, ...rest}: ButtonProps) {
+export default function Button({large = false, text, isLoading = false, ...rest}: ButtonProps) {
  return (
   <button
    {...rest}

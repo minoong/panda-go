@@ -33,7 +33,7 @@ const EditProfile: NextPage = () => {
   formState: {errors},
   watch,
  } = useForm<EditProfileFormProps>();
- const [editProfile, {data, loading}] = useMutation<EditProfileResponse>(`api/users/me`);
+ const [editProfile, {data, loading}] = useMutation<EditProfileResponse>(`/api/users/me`);
 
  useEffect(() => {
   if (user?.name) setValue('name', user.name);
@@ -59,7 +59,7 @@ const EditProfile: NextPage = () => {
 
  const onValid = async ({email, phone, name, avatar}: EditProfileFormProps) => {
   if (loading) return;
-  if ([email, phone, name].includes('')) {
+  if (email === '' && phone === '' && name === '') {
    return setError('formErrors', {
     message: 'Email OR Phone number are required. You need to choose one.',
    });
@@ -116,7 +116,7 @@ const EditProfile: NextPage = () => {
     <Input register={register('email')} required={false} label="Email address" name="email" type="email" />
     <Input register={register('phone')} required={false} label="Phone number" name="phone" type="text" kind="phone" />
     {errors.formErrors ? <span className="my-2 text-red-500 font-medium text-center block">{errors.formErrors.message}</span> : null}
-    <Button text={loading ? 'Loading...' : 'Update profile'} />
+    <Button text={loading ? 'Loading...' : 'Update profile'} isLoading={loading} />
    </form>
   </Layout>
  );
