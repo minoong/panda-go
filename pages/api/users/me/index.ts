@@ -5,7 +5,6 @@ import client from '@libs/server/client';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
  if (req.method === 'POST') {
-  console.log('sdjflkasfjlkd');
   const {
    session: {user},
    body: {email, phone, name, avatarId},
@@ -101,16 +100,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
    });
   }
   res.json({ok: true});
+ } else {
+  const profile = await client.user.findUnique({
+   where: {id: req.session.user?.id},
+  });
+
+  res.json({
+   ok: true,
+   profile,
+  });
  }
-
- const profile = await client.user.findUnique({
-  where: {id: req.session.user?.id},
- });
-
- res.json({
-  ok: true,
-  profile,
- });
 }
 
 export default withApiSession(
