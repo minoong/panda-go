@@ -7,17 +7,20 @@ import Providers from '@components/toast/Providers';
 function MyApp({Component, pageProps}: AppProps) {
  console.log('APP IS RUNNING');
  return (
-  <SWRConfig
-   value={{
-    fetcher: (url: string) => fetch(url).then((response) => response.json()),
-   }}
-  >
-   <Providers>
-    <div className="w-full max-w-xl mx-auto">
-     <Component {...pageProps} />
-    </div>
-   </Providers>
-  </SWRConfig>
+  <>
+   <Script src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NCP_CLIENT_ID}&callback=initMap`} />
+   <SWRConfig
+    value={{
+     fetcher: (url: string) => fetch(url).then((response) => response.json()),
+    }}
+   >
+    <Providers>
+     <div className="w-full max-w-xl mx-auto">
+      <Component {...pageProps} />
+     </div>
+    </Providers>
+   </SWRConfig>
+  </>
  );
 }
 
