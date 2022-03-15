@@ -39,3 +39,6 @@ yarn-error.log*
 
 # env
 .env
+
+# ignore tailwind
+styles/styles.css
