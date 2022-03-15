@@ -1,3 +1,4 @@
+import {useToast} from '@components/toast/ToastProvider';
 import {useEffect, useState} from 'react';
 
 interface UseCoordState {
@@ -6,13 +7,20 @@ interface UseCoordState {
 }
 
 export default function useCoords() {
+ const toast = useToast();
  const [coords, setCoords] = useState<UseCoordState>({
   longitude: null,
   latitude: null,
  });
 
  const onSuccess = ({coords: {latitude, longitude}}: GeolocationPosition) => {
-  setCoords({latitude, longitude});
+  setCoords((prev) => {
+   if (JSON.stringify(prev) !== JSON.stringify({latitude, longitude})) {
+    toast?.push('위치 설정 완료.', 'Info', 1500);
+   }
+
+   return {latitude, longitude};
+  });
  };
 
  useEffect(() => {
