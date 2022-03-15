@@ -15,6 +15,19 @@ module.exports = {
    animation: {
     't-in-bottom': 'toast-in-bottom .7s',
    },
+   scale: {
+    102: '1.02',
+   },
+
+   truncate: {
+    lines: {
+     1: '1',
+     2: '2',
+     3: '3',
+     5: '5',
+     8: '8',
+    },
+   },
   },
  },
  darkMode: 'media', // class

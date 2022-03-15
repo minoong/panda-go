@@ -1,6 +1,8 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
 import Layout from '@components/layout';
+import Providers from '@components/toast/Providers';
+import {useToast} from '@components/toast/ToastProvider';
 import useMutation from '@libs/client/useMutation';
 import useUser from '@libs/client/useUser';
 import {NextPage} from 'next';
@@ -22,6 +24,9 @@ interface EditProfileResponse {
 }
 
 const EditProfile: NextPage = () => {
+ const toast = useToast();
+ const [interval, setInterval] = useState(3500);
+
  const inputRef = useRef(null);
  const [avatarPreview, setAvatarPreview] = useState('');
  const {user} = useUser();
@@ -45,6 +50,8 @@ const EditProfile: NextPage = () => {
  useEffect(() => {
   if (data && !data.ok && data.error) {
    setError('formErrors', {message: data.error});
+  } else if (data && data.ok) {
+   toast?.push('프로필 업데이트 완료.', 'Success', interval, 'truncate-2-lines');
   }
  }, [data, setError]);
 
