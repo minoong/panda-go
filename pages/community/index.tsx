@@ -1,8 +1,9 @@
-import {Post, User} from '@prisma/client';
+import {useEffect, useRef, useState} from 'react';
 import {NextPage} from 'next';
+import {Post, User} from '@prisma/client';
 import client from '@libs/server/client';
 import useCoords from '@libs/client/useCoords';
-import {useEffect, useRef, useState} from 'react';
+import Layout from '@components/layout';
 
 interface PostWithUser extends Post {
  user: User;
@@ -29,6 +30,7 @@ const Community: NextPage<PostsResponse> = ({posts}) => {
    const map = new naver.maps.Map(ref.current!, {
     center: new naver.maps.LatLng(latitude, longitude),
     zoom: 15,
+    draggable: false,
    });
 
    new naver.maps.Marker({
@@ -43,10 +45,15 @@ const Community: NextPage<PostsResponse> = ({posts}) => {
  }, [latitude, longitude]);
 
  return (
-  <div>
-   {latitude}, {longitude}
-   <div ref={ref} style={{width: '100%', height: '40vh'}} />
-  </div>
+  <Layout hasTabBar title="나의 동네">
+   <div className="px-4 pt-4">
+    <div ref={ref} style={{width: '100%', height: '11vh'}}>
+     <div className="animate-pulse flex space-x-4 w-full h-full">
+      <div className="bg-slate-700 w-full h-full"></div>
+     </div>
+    </div>
+   </div>
+  </Layout>
  );
 };
 

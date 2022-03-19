@@ -1,4 +1,4 @@
-import '../styles/styles.css';
+import '../styles/globals.css';
 import type {AppProps} from 'next/app';
 import {SWRConfig} from 'swr';
 import Script from 'next/script';
