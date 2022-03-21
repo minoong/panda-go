@@ -46,7 +46,6 @@ export default function ToastProvider({children, variant}: ToastProviderProps) {
  const [data, setData] = useState<Array<Toast>>([]);
  const Push = useCallback(
   (message: string, type: ToastMessageType, lifetime?: number, truncate?: Truncate) => {
-   console.log('sadfjkasdfjlkd');
    if (message) {
     const new_item: Toast = {
      id: uuid(),
@@ -87,7 +86,6 @@ export default function ToastProvider({children, variant}: ToastProviderProps) {
    pushCustom: PushCustom,
 
    async remove(id: string) {
-    console.log('remove');
     setData((prevState) => prevState.filter((e) => e.id != id));
    },
   };
