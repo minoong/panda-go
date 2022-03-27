@@ -8,10 +8,10 @@ const toConvert = (value: string | string[]) => parseFloat(value.toString());
 async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
  if (req.method === 'GET') {
   const {
-   query: {latitude, longitude, pageIndex},
+   query: {latitude, longitude, page},
   } = req;
 
-  console.log(latitude, longitude, pageIndex);
+  console.log(latitude, longitude, page);
 
   client.$queryRaw`SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';`.then(
    async () => {
@@ -43,12 +43,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
        },
       },
      }),
-     skip: +pageIndex,
-     take: 1,
+     skip: +page * 6,
+     take: 6,
      orderBy: {
       createdAt: 'desc',
      },
     });
+
     res.json({
      ok: true,
      posts,

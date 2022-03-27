@@ -1,12 +1,12 @@
 import {useEffect, useRef, useState} from 'react';
 import {NextPage} from 'next';
 import {Post, User} from '@prisma/client';
-import client from '@libs/server/client';
 import useCoords from '@libs/client/useCoords';
 import Layout from '@components/layout';
 import Link from 'next/link';
-import useSWR, {SWRConfig} from 'swr';
+import {SWRConfig} from 'swr';
 import useSWRInfinite from 'swr/infinite';
+import Content from '@components/skeleton/Content';
 
 interface PostWithUser extends Post {
  user: User;
@@ -16,30 +16,60 @@ interface PostWithUser extends Post {
  };
 }
 
-interface PostsResponse {
- posts: PostWithUser[];
-}
+// interface PostsResponse {
+//  posts: PostWithUser[];
+// }
 
-const getKey = (pageIndex: number, previousPageData: {posts: string | any[]}) => {
- console.log(pageIndex, previousPageData);
- if (previousPageData && !previousPageData.posts?.length) {
-  console.log('end');
+const getKey = (pageIndex: number, previousPageData: string | any[]) => {
+ if (previousPageData && !previousPageData.length) {
   return null;
- } // 끝에 도달
- console.log(`/api/posts?pageIndex=${pageIndex}`);
- return `/api/posts?pageIndex=${pageIndex}`; // SWR 키
+ }
+ return `/api/posts?page=${pageIndex}&limit=5`; // SWR 키
 };
 
-const Community: NextPage<PostsResponse> = ({posts}) => {
+const Community: NextPage = () => {
  const {latitude, longitude} = useCoords();
  const naverMapsRef = useRef<naver.maps.Map>();
  const ref = useRef<HTMLDivElement | null>(null);
- const {data} = useSWR<PostsResponse>(latitude && longitude ? `/api/posts?latitude=${latitude}&longitude=${longitude}` : null);
+ const [target, setTarget] = useState<HTMLDivElement | null>(null);
+ const {data, size, setSize, error, isValidating} = useSWRInfinite(
+  getKey,
+  (url: string) =>
+   fetch(url)
+    .then((response) => response.json())
+    .then((response) => response.posts),
+  {
+   revalidateAll: true,
+  },
+ );
 
- const {data: testData, size, setSize} = useSWRInfinite(getKey);
+ const isLoadingInitialData = !data && !error;
+ const isLoadingMore = isLoadingInitialData || (size > 0 && data && typeof data[size - 1] === 'undefined');
+ const isEmpty = data?.[0]?.length === 0;
+ const isRefreshing = isValidating && data && data.length === size;
+ const isEnd = !isLoadingMore && data?.[size - 1].length < 5;
 
- console.log('testData', testData);
- console.log('size: ', size);
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ const onIntersect: IntersectionObserverCallback = (entries, observer) => {
+  entries.forEach((entry) => {
+   if (isEnd) return;
+   if (entry.isIntersecting && !isLoadingMore) {
+    observer.unobserve(entry.target);
+    setSize(size + 1);
+   }
+  });
+ };
+
+ useEffect(() => {
+  let observer: IntersectionObserver;
+  if (target) {
+   observer = new IntersectionObserver(onIntersect, {threshold: 0.5});
+   observer.observe(target);
+  }
+  return () => {
+   return observer && observer.disconnect();
+  };
+ }, [onIntersect, target]);
 
  useEffect(() => {
   if (ref.current === null) return;
@@ -61,26 +91,12 @@ const Community: NextPage<PostsResponse> = ({posts}) => {
 
   setTimeout(() => {
    initMaps();
-  }, 0);
+  }, 150);
  }, [latitude, longitude]);
 
- useEffect(() => {
-  data?.posts.forEach((post) => {
-   new naver.maps.Marker({
-    position: new naver.maps.LatLng(post.latitude! + 0.0000094, post.longitude! + 0.000529),
-    map: naverMapsRef.current,
-   });
-  });
- }, [data]);
-
  return (
-  <SWRConfig
-   value={{
-    suspense: true,
-   }}
-  >
+  <SWRConfig>
    <Layout hasTabBar title="나의 동네">
-    <button onClick={() => setSize(size + 1)}>Load More</button>
     <div className="px-4 pt-4">
      <div ref={ref} style={{width: '100%', height: '12vh'}}>
       <div className="animate-pulse flex space-x-4 w-full h-full">
@@ -89,7 +105,7 @@ const Community: NextPage<PostsResponse> = ({posts}) => {
      </div>
 
      <div className="space-y-4 divide-y-[2px]">
-      {posts?.map((post) => (
+      {data?.flat().map((post: PostWithUser) => (
        <Link key={post.id} href={`/community/${post.id}`}>
         <a className="flex cursor-pointer flex-col pt-4 items-start">
          <span className="text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-gray-200 text-gray-700 rounded-full">
@@ -124,30 +140,16 @@ const Community: NextPage<PostsResponse> = ({posts}) => {
         </a>
        </Link>
       ))}
+      {isLoadingMore && <Content />}
+     </div>
+
+     <div className="w-full bg-red-300" ref={setTarget}>
+      {isLoadingMore ? 'loading...' : isEnd ? 'no more issues' : 'load more'}
      </div>
     </div>
    </Layout>
   </SWRConfig>
  );
 };
-
-export async function getStaticProps() {
- console.log('BUILDING COMM. STATICALLY');
- const posts = await client.post.findMany({
-  include: {user: true},
-  skip: 0,
-  take: 1,
-  orderBy: {
-   createdAt: 'desc',
-  },
- });
-
- return {
-  props: {
-   posts: JSON.parse(JSON.stringify(posts)),
-  },
-  revalidate: 120,
- };
-}
 
 export default Community;
