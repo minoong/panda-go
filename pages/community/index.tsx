@@ -98,7 +98,7 @@ const Community: NextPage = () => {
   <SWRConfig>
    <Layout hasTabBar title="나의 동네">
     <div className="px-4 pt-4">
-     <div ref={ref} style={{width: '100%', height: '12vh'}}>
+     <div ref={ref} style={{width: '100%', height: '12vh'}} className="rounded-md">
       <div className="animate-pulse flex space-x-4 w-full h-full">
        <div className="bg-slate-700 w-full h-full"></div>
       </div>
