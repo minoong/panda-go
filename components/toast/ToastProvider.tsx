@@ -42,7 +42,6 @@ export const useToast = () => useContext(ToastContext);
 const DEFAULT_INTERVAL = 2500;
 
 export default function ToastProvider({children, variant}: ToastProviderProps) {
- console.log('ToastProvider');
  const [data, setData] = useState<Array<Toast>>([]);
  const Push = useCallback(
   (message: string, type: ToastMessageType, lifetime?: number, truncate?: Truncate) => {

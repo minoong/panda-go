@@ -13,19 +13,32 @@ export default function useCoords() {
   latitude: null,
  });
 
- const onSuccess = ({coords: {latitude, longitude}}: GeolocationPosition) => {
-  setCoords((prev) => {
-   if (JSON.stringify(prev) !== JSON.stringify({latitude, longitude})) {
-    toast?.push('위치 설정 완료.', 'Info', 1500);
-   }
-
-   return {latitude, longitude};
-  });
- };
-
  useEffect(() => {
-  navigator.geolocation.getCurrentPosition(onSuccess);
- }, []);
+  const {geolocation} = navigator;
+
+  if (!geolocation) {
+   return;
+  }
+
+  const onSuccess = ({coords: {latitude, longitude}}: GeolocationPosition) => {
+   if (latitude === null || longitude === null) return;
+
+   let updated = false;
+
+   setCoords((prev) => {
+    if (JSON.stringify(prev) !== JSON.stringify({latitude, longitude})) {
+     updated = true;
+    }
+
+    return {latitude, longitude};
+   });
+
+   if (updated) {
+    toast?.push('위치 설정 완료.', 'Info', 700);
+   }
+  };
+  geolocation.getCurrentPosition(onSuccess);
+ }, [toast]);
 
  return coords;
 }
