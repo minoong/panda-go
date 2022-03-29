@@ -5,6 +5,7 @@ module.exports = {
   reactRoot: true,
   /*  runtime: "nodejs",
       serverComponents: true, */
+  scrollRestoration: true,
  },
  images: {
   domains: ['imagedelivery.net', 'videodelivery.net'],
