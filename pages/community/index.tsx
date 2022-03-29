@@ -8,6 +8,24 @@ import {SWRConfig} from 'swr';
 import useSWRInfinite from 'swr/infinite';
 import Content from '@components/skeleton/Content';
 
+function displayedAt(createdAt: Date) {
+ const milliSeconds = +new Date() - +new Date(createdAt);
+ const seconds = milliSeconds / 1000;
+ if (seconds < 60) return `방금 전`;
+ const minutes = seconds / 60;
+ if (minutes < 60) return `${Math.floor(minutes)}분 전`;
+ const hours = minutes / 60;
+ if (hours < 24) return `${Math.floor(hours)}시간 전`;
+ const days = hours / 24;
+ if (days < 7) return `${Math.floor(days)}일 전`;
+ const weeks = days / 7;
+ if (weeks < 5) return `${Math.floor(weeks)}주 전`;
+ const months = days / 30;
+ if (months < 12) return `${Math.floor(months)}개월 전`;
+ const years = days / 365;
+ return `${Math.floor(years)}년 전`;
+}
+
 interface PostWithUser extends Post {
  user: User;
  _count: {
@@ -109,14 +127,14 @@ const Community: NextPage = () => {
        <Link key={post.id} href={`/community/${post.id}`}>
         <a className="flex cursor-pointer flex-col pt-4 items-start">
          <span className="text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-gray-200 text-gray-700 rounded-full">
-          동네질문
+          {post.id}, 동네질문
          </span>
          <div className="mt-2 px-4 text-gray-700">
           <span className="text-orange-500 font-medium"></span> {post.question}
          </div>
          <div className="mt-5 px-4 flex items-center justify-between w-full text-gray-500 font-medium text-xs">
           <span>{post.user.name}</span>
-          <span>{post.createdAt}</span>
+          <span>{displayedAt(post.createdAt)}</span>
          </div>
          <div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t   w-full">
           <span className="flex space-x-2 items-center text-sm">
