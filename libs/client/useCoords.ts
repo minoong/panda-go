@@ -12,6 +12,7 @@ export default function useCoords() {
   longitude: null,
   latitude: null,
  });
+ const [isMounted, setIsMounted] = useState<boolean>(false);
 
  useEffect(() => {
   const {geolocation} = navigator;
@@ -23,22 +24,22 @@ export default function useCoords() {
   const onSuccess = ({coords: {latitude, longitude}}: GeolocationPosition) => {
    if (latitude === null || longitude === null) return;
 
-   let updated = false;
-
    setCoords((prev) => {
     if (JSON.stringify(prev) !== JSON.stringify({latitude, longitude})) {
-     updated = true;
+     setIsMounted(true);
     }
 
     return {latitude, longitude};
    });
-
-   if (updated) {
-    toast?.push('위치 설정 완료.', 'Info', 700);
-   }
   };
   geolocation.getCurrentPosition(onSuccess);
  }, [toast]);
+
+ useEffect(() => {
+  if (isMounted) {
+   toast?.push('위치 설정 완료.', 'Info', 700);
+  }
+ }, [isMounted]);
 
  return coords;
 }
