@@ -1,6 +1,8 @@
 import {useToast} from '@components/toast/ToastProvider';
 import {useEffect, useState} from 'react';
 
+console.log(1);
+
 interface UseCoordState {
  longitude: number | null;
  latitude: number | null;
