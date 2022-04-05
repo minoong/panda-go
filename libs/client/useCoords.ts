@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react';
 
 console.log(1);
 console.log(2);
+console.log(3);
 
 interface UseCoordState {
  longitude: number | null;
