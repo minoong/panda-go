@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
+import join from 'lodash/join';
 
 export function cls(...classnames: string[]) {
- return _.join(classnames, ' ');
+ return join(classnames, ' ');
 }
