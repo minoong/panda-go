@@ -2,6 +2,7 @@ import {useToast} from '@components/toast/ToastProvider';
 import {useEffect, useState} from 'react';
 
 console.log(1);
+console.log(2);
 
 interface UseCoordState {
  longitude: number | null;
