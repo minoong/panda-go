@@ -8,6 +8,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
   query: {id},
   session: {user},
  } = req;
+
  const alreadyExists = await client.fav.findFirst({
   where: {
    productId: +id.toString(),
