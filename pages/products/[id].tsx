@@ -1,6 +1,6 @@
 import {Product, User} from '@prisma/client';
 import {GetStaticPaths, GetStaticProps, NextPage} from 'next';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import client from '@libs/server/client';
 import useUser from '@libs/client/useUser';
 import {useRouter} from 'next/router';
@@ -11,6 +11,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Button from '@components/Button';
 import {cls} from '@libs/utils';
+import {animated, config, Spring, useSpring} from '@react-spring/web';
 
 interface ProductWithUser extends Product {
  user: User;
@@ -29,6 +30,25 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({product, relatedProducts, isL
  const {mutate} = useSWRConfig();
  const {data, mutate: boundMutate} = useSWR<ItemDetailResponse>(router.query.id ? `/api/products/${router.query.id}` : null);
  const [toggleFav, {loading}] = useMutation(`/api/products/${router.query.id}/fav`);
+
+ const [price, setPrice] = useState(0);
+
+ const [flip, set] = useState(false);
+ const {number} = useSpring({
+  reset: true,
+  reverse: flip,
+  from: {number: 0},
+  number: price,
+  delay: 200,
+  config: config.molasses,
+  //   onRest: () => set(!flip),
+ });
+
+ useEffect(() => {
+  if (!product?.price) return;
+  setPrice(product.price);
+ }, [product?.price]);
+
  const onFavClick = () => {
   if (!data || loading) return;
 
@@ -39,7 +59,16 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({product, relatedProducts, isL
  if (router.isFallback) {
   return (
    <Layout title="loading ...">
-    <span>잠기만 기다려 주세요...</span>
+    <Spring
+     loop
+     from={{opacity: 0, color: 'red'}}
+     to={[
+      {opacity: 1, color: '#ffaaee'},
+      {opacity: 0, color: 'rgb(14,26,19)'},
+     ]}
+    >
+     {(styles) => <animated.div style={styles}>I will fade in and out</animated.div>}
+    </Spring>
    </Layout>
   );
  }
@@ -66,7 +95,9 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({product, relatedProducts, isL
     </div>
     <div className="mt-5">
      <h1 className="text-3xl font-bold text-gray-900">{product?.name}</h1>
-     <span className="text-2xl block mt-3 text-gray-900">${product?.price}</span>
+     <span className="text-2xl block mt-3 text-gray-900">
+      $ <animated.div className="inline-block">{number.to((n) => n)}</animated.div>
+     </span>
      <p className=" my-6 text-gray-700">{product?.description}</p>
      <div className="flex items-center justify-between space-x-2">
       <Button large text="Talk to seller" />
