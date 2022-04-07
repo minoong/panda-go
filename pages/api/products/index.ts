@@ -19,8 +19,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
        },
       },
      },
-     skip: +page * 1,
-     take: 1,
+     skip: +page * 2,
+     take: 2,
      orderBy: {
       createdAt: 'desc',
      },
@@ -28,7 +28,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
     res.json({
      ok: true,
      products,
-     nextCursor: +page + 1,
+     nextCursor: +page + 2,
     });
    },
   );

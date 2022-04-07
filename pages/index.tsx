@@ -27,7 +27,8 @@ const getKey = (pageIndex: number, previousPageData: ProductsResponse) => {
  if (previousPageData?.products && !previousPageData?.products?.length) {
   return null;
  }
- return `/api/products?page=${pageIndex}&limit=5`; // SWR 키
+ console.log(`/api/products?page=${previousPageData?.nextCursor || 0}&limit=2`);
+ return `/api/products?page=${previousPageData?.nextCursor || 0}&limit=2`; // SWR 키
 };
 
 const Home: NextPage = () => {
@@ -36,6 +37,8 @@ const Home: NextPage = () => {
  const {data, size, setSize, error, isValidating} = useSWRInfinite<ProductsResponse>(getKey, (url: string) => fetch(url).then((response) => response.json()), {
   revalidateAll: true,
  });
+
+ console.log(data);
 
  const isLoadingInitialData = !data && !error;
  const isLoadingMore = isLoadingInitialData || (size > 0 && data && typeof data[size - 1] === 'undefined');
@@ -67,52 +70,65 @@ const Home: NextPage = () => {
  }, [onIntersect, target]);
 
  return (
-  <SWRConfig>
-   <Layout title="홈" hasTabBar>
-    <Head>
-     <title>Home</title>
-    </Head>
-    <div className="flex flex-col space-y-5 divide-y">
-     <button onClick={() => setSize(size + 1)}>more</button>
-     {data
-      ? data?.map((products) =>
-         products.products.map((product) => (
-          <Item id={product.id} key={product.id} title={product.name} price={product.price} hearts={product._count?.favs || 0} image={product.image} />
-         )),
-        )
-      : 'Loading...'}
-     <FloatingButton href="/products/upload">
-      <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-      </svg>
-     </FloatingButton>
-     <div className="w-full bg-red-300" ref={setTarget}>
-      {isLoadingMore ? 'loading...' : isEnd ? 'no more issues' : 'load more'}
-     </div>
+  <Layout title="홈" hasTabBar>
+   <Head>
+    <title>Home</title>
+   </Head>
+   <div className="flex flex-col space-y-5 divide-y">
+    <button onClick={() => setSize(size + 1)}>more</button>
+    {data
+     ? data?.map((products) =>
+        products.products.map((product) => (
+         <Item id={product.id} key={product.id} title={product.name} price={product.price} hearts={product._count?.favs || 0} image={product.image} />
+        )),
+       )
+     : 'Loading...'}
+    <FloatingButton href="/products/upload">
+     <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+     </svg>
+    </FloatingButton>
+    <div className="w-full bg-red-300" ref={setTarget}>
+     {isLoadingMore ? 'loading...' : isEnd ? 'no more issues' : 'load more'}
     </div>
-   </Layout>
-  </SWRConfig>
+   </div>
+  </Layout>
  );
 };
 
-// const Page: NextPage<{products: ProductsResponse[]}> = ({products}) => <Home />;
+const Page: NextPage<{products: ProductsResponse[]}> = ({products}) => (
+ <SWRConfig
+  value={{
+   fallback: {
+    '/api/products?page=0&limit=2': {
+     ok: true,
+     products,
+     nextCursor: 2,
+    },
+   },
+  }}
+ >
+  <Home />
+ </SWRConfig>
+);
 
-// export async function getServerSideProps() {
-//  console.log('SSR');
-//  const products = await client.product.findMany({
-//   take: 1,
-//   orderBy: {
-//    createdAt: 'desc',
-//   },
-//  });
+export async function getServerSideProps() {
+ console.log('SSR');
+ const products = await client.product.findMany({
+  skip: 0,
+  take: 2,
+  orderBy: {
+   createdAt: 'desc',
+  },
+ });
 
-//  console.log('products', products);
+ console.log('products', products);
 
-//  return {
-//   props: {
-//    products: JSON.parse(JSON.stringify(products)),
-//   },
-//  };
-// }
+ return {
+  props: {
+   products: JSON.parse(JSON.stringify(products)),
+  },
+ };
+}
 
-export default Home;
+export default Page;
