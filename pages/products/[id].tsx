@@ -35,7 +35,7 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({product, relatedProducts, isL
 
  const [flip, set] = useState(false);
  const {number} = useSpring({
-  reset: true,
+  reset: false,
   reverse: flip,
   from: {number: 0},
   number: price,

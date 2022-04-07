@@ -5,6 +5,10 @@ import {withApiSession} from '@libs/server/withSession';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
  if (req.method === 'GET') {
+  const {
+   query: {page = 0},
+  } = req;
+
   client.$queryRaw`SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';`.then(
    async () => {
     const products = await client.product.findMany({
@@ -15,10 +19,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
        },
       },
      },
+     skip: +page * 1,
+     take: 1,
+     orderBy: {
+      createdAt: 'desc',
+     },
     });
     res.json({
      ok: true,
      products,
+     nextCursor: +page + 1,
     });
    },
   );
@@ -41,6 +51,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
     },
    },
   });
+
   res.json({
    ok: true,
    product,
