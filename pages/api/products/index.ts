@@ -28,7 +28,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
     res.json({
      ok: true,
      products,
-     nextCursor: +page + 2,
+     nextCursor: +page + 1,
     });
    },
   );

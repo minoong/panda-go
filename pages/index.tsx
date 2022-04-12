@@ -27,7 +27,6 @@ const getKey = (pageIndex: number, previousPageData: ProductsResponse) => {
  if (previousPageData?.products && !previousPageData?.products?.length) {
   return null;
  }
- console.log(`/api/products?page=${previousPageData?.nextCursor || 0}&limit=2`);
  return `/api/products?page=${previousPageData?.nextCursor || 0}&limit=2`; // SWR 키
 };
 
@@ -38,14 +37,12 @@ const Home: NextPage = () => {
   revalidateAll: true,
  });
 
- console.log(data);
-
  const isLoadingInitialData = !data && !error;
  const isLoadingMore = isLoadingInitialData || (size > 0 && data && typeof data[size - 1] === 'undefined');
  const isEmpty = data?.[0]?.products.length === 0;
  const isRefreshing = isValidating && data && data.length === size;
  //  const isEnd = !isLoadingMore && data?.[size - 1]?.products?.length < 5;
- const isEnd = !isLoadingMore && data![size - 1].products.length < 1;
+ const isEnd = !isLoadingMore && (data![size - 1]?.products?.length || 0) < 2;
 
  // eslint-disable-next-line react-hooks/exhaustive-deps
  const onIntersect: IntersectionObserverCallback = (entries, observer) => {
@@ -75,7 +72,6 @@ const Home: NextPage = () => {
     <title>Home</title>
    </Head>
    <div className="flex flex-col space-y-5 divide-y">
-    <button onClick={() => setSize(size + 1)}>more</button>
     {data
      ? data?.map((products) =>
         products.products.map((product) => (
