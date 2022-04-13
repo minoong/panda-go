@@ -19,7 +19,8 @@
    "@libs/*": ["libs/*"],
    "@components/*": ["components/*"],
    "@containers/*": ["containers/*"],
-   "@hooks/*": ["hooks/*"]
+   "@hooks/*": ["hooks/*"],
+   "@rxjs/*": ["rxjs/*"]
   }
  },
  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
