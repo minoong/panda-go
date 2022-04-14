@@ -23,7 +23,6 @@ interface ProductsResponse {
 }
 
 const getKey = (pageIndex: number, previousPageData: ProductsResponse) => {
- console.log(previousPageData?.nextCursor);
  if (previousPageData?.products && !previousPageData?.products?.length) {
   return null;
  }

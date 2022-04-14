@@ -1,4 +1,4 @@
-type Market = 'KRW-BTC';
+export type Market = 'KRW-BTC' | 'KRW-ETH';
 
 export interface UpbitProps {
  market: Market;

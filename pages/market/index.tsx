@@ -1,38 +1,48 @@
 import Layout from '@components/layout';
 import {NextPage} from 'next';
 import React, {useEffect, useMemo, useState} from 'react';
+import {BehaviorSubject, combineLatestWith, map} from 'rxjs';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
+import {useObservableState} from 'observable-hooks';
 import Typography from '@mui/material/Typography';
-import {CustomCandles, upbitWithLmw$} from '@rxjs/store';
-import {Subscription} from 'rxjs';
-import {Box, TextField} from '@mui/material';
+import {bookmark$, CustomCandles, market$, deck$} from '@rxjs/store';
+import {Box, Checkbox, TextField} from '@mui/material';
 
-const Stock = () => {
- useEffect(() => {
-  const subscription = upbitWithLmw$.subscribe(console.log);
+const Deck = () => {
+ const deck = useObservableState(deck$, []);
 
-  return () => subscription.unsubscribe();
- }, []);
-
- return <div>hi</div>;
+ return (
+  <div>
+   <h4>Deck</h4>
+   <div>
+    {deck.map((market) => (
+     <div key={market.market}>
+      <div>{market.market}!!</div>
+     </div>
+    ))}
+   </div>
+  </div>
+ );
 };
 
 const Search = () => {
- const [search, setSearch] = useState('');
- const [symbol, setSymbol] = useState<CustomCandles[]>([]);
- useEffect(() => {
-  console.log('12312');
-  const subscription = upbitWithLmw$.subscribe(setSymbol);
+ const search$ = useMemo(() => new BehaviorSubject(''), []);
+ const markets = useObservableState(market$, []);
+ const [filteredSymbol] = useObservableState(
+  () =>
+   market$.pipe(
+    combineLatestWith(search$),
+    map(([market, bookmark]) => market.filter((m) => m.market.toLowerCase().includes(bookmark.toLowerCase()))),
+   ),
+  [],
+ );
 
-  return () => subscription.unsubscribe();
- }, []);
-
- const filteredSymbol = useMemo(() => symbol.filter((s) => s.market.toUpperCase().includes(search.toUpperCase())), [search, symbol]);
  return (
   <>
    <Box
@@ -42,11 +52,41 @@ const Search = () => {
      '& > :not(style)': {m: 1},
     }}
    >
-    <TextField id="demo-helper-text-misaligned-no-helper" label="Name" onChange={(e) => setSearch(e.target.value)} />
+    <TextField id="demo-helper-text-misaligned-no-helper" label="Name" value={search$.value} onChange={(e) => search$.next(e.target.value)} />
    </Box>
-   {filteredSymbol.map((symbol) => (
-    <div key={symbol.market}>{symbol.market}</div>
-   ))}
+
+   <List sx={{width: '100%', bgcolor: 'background.paper'}}>
+    {filteredSymbol.map((symbol) => (
+     <ListItem
+      key={symbol.market}
+      secondaryAction={
+       <input
+        type="checkbox"
+        checked={symbol.isBookmark}
+        onChange={() => {
+         if (bookmark$.value.includes(symbol.market)) {
+          bookmark$.next(bookmark$.value.filter((market) => market !== symbol.market));
+         } else {
+          bookmark$.next([...bookmark$.value, symbol.market]);
+         }
+        }}
+       />
+      }
+      disablePadding
+     >
+      <ListItemButton>
+       <ListItemAvatar>
+        <Avatar alt={symbol.market} src={`/markets/${symbol.market.split('-')[1]}.png`} />
+       </ListItemAvatar>
+       <ListItemText id={symbol.market} primary={symbol.market} />
+       <Typography variant="body2">
+        <br />
+        {symbol.trade_price}
+       </Typography>
+      </ListItemButton>
+     </ListItem>
+    ))}
+   </List>
   </>
  );
 };
@@ -55,59 +95,7 @@ const index: NextPage = () => {
  return (
   <Layout hasTabBar title="마켓">
    <Search />
-   <Stock />
-   <List sx={{width: '100%', bgcolor: 'background.paper'}}>
-    <ListItem alignItems="flex-start">
-     <ListItemAvatar>
-      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-     </ListItemAvatar>
-     <ListItemText
-      primary="Brunch this weekend?"
-      secondary={
-       <React.Fragment>
-        <Typography sx={{display: 'inline'}} component="span" variant="body2" color="text.primary">
-         Ali Connors
-        </Typography>
-        {" — I'll be in your neighborhood doing errands this…"}
-       </React.Fragment>
-      }
-     />
-    </ListItem>
-    <Divider variant="inset" component="li" />
-    <ListItem alignItems="flex-start">
-     <ListItemAvatar>
-      <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-     </ListItemAvatar>
-     <ListItemText
-      primary="Summer BBQ"
-      secondary={
-       <React.Fragment>
-        <Typography sx={{display: 'inline'}} component="span" variant="body2" color="text.primary">
-         to Scott, Alex, Jennifer
-        </Typography>
-        {" — Wish I could come, but I'm out of town this…"}
-       </React.Fragment>
-      }
-     />
-    </ListItem>
-    <Divider variant="inset" component="li" />
-    <ListItem alignItems="flex-start">
-     <ListItemAvatar>
-      <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-     </ListItemAvatar>
-     <ListItemText
-      primary="Oui Oui"
-      secondary={
-       <React.Fragment>
-        <Typography sx={{display: 'inline'}} component="span" variant="body2" color="text.primary">
-         Sandra Adams
-        </Typography>
-        {' — Do you have Paris recommendations? Have you ever…'}
-       </React.Fragment>
-      }
-     />
-    </ListItem>
-   </List>
+   <Deck />
   </Layout>
  );
 };
