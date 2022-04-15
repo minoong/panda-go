@@ -81,7 +81,7 @@ const Search = () => {
        <ListItemText id={symbol.market} primary={symbol.market} />
        <Typography variant="body2">
         <br />
-        {symbol.trade_price}
+        {symbol.signed_change_price}, {(symbol.signed_change_rate * 100).toFixed(2)}
        </Typography>
       </ListItemButton>
      </ListItem>

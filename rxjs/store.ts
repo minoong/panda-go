@@ -1,26 +1,38 @@
-import {BehaviorSubject, from, interval, repeat, switchMap, takeUntil, timer, map, combineLatestWith} from 'rxjs';
-import {Market, UpbitProps} from '../types/market';
+import {BehaviorSubject, from, interval, repeat, switchMap, takeUntil, map, forkJoin, combineLatestWith} from 'rxjs';
+import {ajax} from 'rxjs/ajax';
+import {Market, MarketDetail, TickerProps} from '../types/market';
 
 // const fetFetch = async () => {
 //  return fetch('https://api.upbit.com/v1/candles/minutes/1?market=KRW-BTC').then((res) => res.json());
 // };
 // export const rawTicker$$ = timer(1, 3000).pipe(switchMap(() => fetFetch()));
 
-export interface CustomCandles extends UpbitProps {
+function allMarketInfo<T>(): Promise<T> {
+ return fetch('https://api.upbit.com/v1/market/all').then((response) => response.json());
+}
+function allMarketCandles<T>(): Promise<T> {
+ return fetch('https://api.upbit.com/v1/ticker?markets=KRW-BTC,KRW-ETH,KRW-XRP,KRW-WAVES').then((response) => response.json());
+}
+
+export interface CustomCandles extends TickerProps {
  symbol: string;
  isBookmark: boolean;
 }
 
+export interface finishMarkets extends CustomCandles {}
+
 const rawTicker$ = new BehaviorSubject<CustomCandles[]>([]);
 
-export const upbitWithLmw$ = rawTicker$.pipe(
- map((candles) =>
-  candles.map((candle) => ({
-   ...candle,
-   symbol: 'LMW',
-   isBookmark: false,
-  })),
- ),
+export const upbitWithLmw$ = forkJoin({
+ markets: allMarketInfo<MarketDetail[]>(),
+ candles: allMarketCandles<CustomCandles[]>(),
+}).pipe(
+ map(({markets, candles}) => {
+  return candles.reduce((acc, candle) => {
+   const market = markets.find((a) => a.market === candle.market);
+   return [...acc, {...market, ...candle, symbol: 'LMW', isBookmark: false}];
+  }, [] as finishMarkets[]);
+ }),
 );
 
 export const bookmark$ = new BehaviorSubject<Market[]>([]);
