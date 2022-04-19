@@ -78,11 +78,18 @@ const Search = () => {
        <ListItemAvatar>
         <Avatar alt={symbol.market} src={`/markets/${symbol.market.split('-')[1]}.png`} />
        </ListItemAvatar>
-       <ListItemText id={symbol.market} primary={symbol.market} />
-       <Typography variant="body2">
-        <br />
-        {symbol.signed_change_price}, {(symbol.signed_change_rate * 100).toFixed(2)}
-       </Typography>
+       <div className="w-full grid grid-cols-4 text-sm font-medium">
+        <div className="flex flex-col">
+         <div>{symbol.korean_name}</div>
+         <div className="text-xs">{symbol.market}</div>
+        </div>
+        <div className={`${symbol.change === 'RISE' ? 'text-red-600' : 'text-blue-600'}`}>{symbol.trade_price.toLocaleString()}</div>
+        <div className={`flex flex-col ${symbol.change === 'RISE' ? 'text-red-600' : 'text-blue-600'}`}>
+         <div>{(symbol.signed_change_rate * 100).toFixed(2)}%</div>
+         <div>{symbol.signed_change_price.toLocaleString()}</div>
+        </div>
+        <div>{symbol.acc_trade_price_24h}</div>
+       </div>
       </ListItemButton>
      </ListItem>
     ))}
