@@ -19,7 +19,7 @@ export interface CustomCandles extends TickerProps {
  isBookmark: boolean;
 }
 
-export interface finishMarkets extends CustomCandles {}
+export type finishMarkets = CustomCandles & MarketDetail;
 
 const rawTicker$ = new BehaviorSubject<CustomCandles[]>([]);
 
@@ -29,7 +29,7 @@ export const upbitWithLmw$ = forkJoin({
 }).pipe(
  map(({markets, candles}) => {
   return candles.reduce((acc, candle) => {
-   const market = markets.find((a) => a.market === candle.market);
+   const market = markets.find((a) => a.market === candle.market)!;
    return [...acc, {...market, ...candle, symbol: 'LMW', isBookmark: false}];
   }, [] as finishMarkets[]);
  }),
@@ -40,10 +40,10 @@ export const bookmark$ = new BehaviorSubject<Market[]>([]);
 export const market$ = upbitWithLmw$.pipe(
  combineLatestWith(bookmark$),
  map(([market, bookmark]) =>
-  market.map((m) => ({
-   ...m,
-   isBookmark: bookmark.includes(m.market),
-  })),
+  market.map((m) => {
+   m.isBookmark = bookmark.includes(m.market);
+   return m;
+  }),
  ),
 );
 
