@@ -1,4 +1,4 @@
-import {BehaviorSubject, from, interval, repeat, switchMap, takeUntil, map, forkJoin, combineLatestWith} from 'rxjs';
+import {BehaviorSubject, from, interval, repeat, switchMap, takeUntil, map, forkJoin, combineLatestWith, fromEvent, timer} from 'rxjs';
 import {ajax} from 'rxjs/ajax';
 import {Market, MarketDetail, TickerProps} from '../types/market';
 
@@ -21,18 +21,22 @@ export interface CustomCandles extends TickerProps {
 
 export type finishMarkets = CustomCandles & MarketDetail;
 
-const rawTicker$ = new BehaviorSubject<CustomCandles[]>([]);
+// const rawTicker$ = new BehaviorSubject<CustomCandles[]>([]);
 
-export const upbitWithLmw$ = forkJoin({
- markets: allMarketInfo<MarketDetail[]>(),
- candles: allMarketCandles<CustomCandles[]>(),
-}).pipe(
- map(({markets, candles}) => {
-  return candles.reduce((acc, candle) => {
-   const market = markets.find((a) => a.market === candle.market)!;
-   return [...acc, {...market, ...candle, symbol: 'LMW', isBookmark: false}];
-  }, [] as finishMarkets[]);
- }),
+export const upbitWithLmw$ = timer(0, 1000 * 10).pipe(
+ switchMap(() =>
+  forkJoin({
+   markets: allMarketInfo<MarketDetail[]>(),
+   candles: allMarketCandles<CustomCandles[]>(),
+  }).pipe(
+   map(({markets, candles}) => {
+    return candles.reduce((acc, candle) => {
+     const market = markets.find((a) => a.market === candle.market)!;
+     return [...acc, {...market, ...candle, symbol: 'LMW', isBookmark: false}];
+    }, [] as finishMarkets[]);
+   }),
+  ),
+ ),
 );
 
 export const bookmark$ = new BehaviorSubject<Market[]>([]);
@@ -54,6 +58,11 @@ export const deck$ = market$.pipe(map((market) => market.filter((m) => m.isBookm
 //   .then((res) => res.json())
 //   .then((data) => rawTicker$.next(data));
 // }, 1000 * 10);
-fetch('https://api.upbit.com/v1/ticker?markets=KRW-BTC,KRW-ETH,KRW-XRP,KRW-WAVES')
- .then((res) => res.json())
- .then((data) => rawTicker$.next(data));
+// setInterval(() => {
+//  fetch('https://api.upbit.com/v1/ticker?markets=KRW-BTC,KRW-ETH,KRW-XRP,KRW-WAVES')
+//   .then((res) => res.json())
+//   .then((data) => rawTicker$.next(data));
+// }, 1000 * 10);
+// fetch('https://api.upbit.com/v1/ticker?markets=KRW-BTC,KRW-ETH,KRW-XRP,KRW-WAVES')
+//  .then((res) => res.json())
+//  .then((data) => rawTicker$.next(data));
