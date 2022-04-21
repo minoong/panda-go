@@ -9,7 +9,8 @@ interface LmwPortalProps {
 function createWrapperAndAppendToBody(id: string) {
  const wrapperElement = document.createElement('div');
  wrapperElement.setAttribute('id', id);
- document.body.appendChild(wrapperElement);
+ const target = document.querySelector('#page')!;
+ target.appendChild(wrapperElement);
 
  return wrapperElement;
 }
