@@ -10,6 +10,7 @@ export default function MyDocument() {
    <body>
     <Main />
     <NextScript />
+    <style>{`overflow:hidden;`}</style>
    </body>
   </Html>
  );

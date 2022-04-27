@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+#__next {
+ overflow: hidden;
+}
+
 .blog-post-content h1 {
  @apply text-red-500 mb-5;
 }

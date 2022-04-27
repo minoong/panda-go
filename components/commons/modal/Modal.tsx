@@ -29,7 +29,7 @@ const Modal: React.FC = () => {
  return (
   <LmwPortal>
    <div className="lmw-modal">
-    <div className="bg-black h-full fixed top-0 left-0 w-full bg-opacity-75" onClick={onDisableModal} />
+    <div className="bg-black h-full fixed top-0 left-0 w-full bg-opacity-75 z-40" onClick={onDisableModal} />
     <div className="bg-white min-h-[150px] bottom-0 absolute right-0 left-0 toast-bottom rounded-t-lg z-50 py-6 px-6">{modalProps.children}</div>
    </div>
   </LmwPortal>
