@@ -1,12 +1,14 @@
 import Layout from '@components/layout';
 import {NextPage} from 'next';
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {BehaviorSubject, combineLatestWith, map} from 'rxjs';
 import List from '@mui/material/List';
 import {useObservableState} from 'observable-hooks';
 import {bookmark$, market$, deck$} from '@rxjs/store';
 import {Box, TextField} from '@mui/material';
 import MarketRow from '@components/market/main/MarketRow';
+import Modal from '@components/commons/modal/Modal';
+import useModal from '@hooks/useModal';
 
 const Deck = () => {
  const deck = useObservableState(deck$, []);
@@ -41,12 +43,11 @@ const Search = () => {
   <>
    <Box
     sx={{
-     display: 'flex',
-     alignItems: 'center',
-     '& > :not(style)': {m: 1},
+     width: 1,
+     marginTop: '0.5rem',
     }}
    >
-    <TextField id="demo-helper-text-misaligned-no-helper" label="Name" value={search$.value} onChange={(e) => search$.next(e.target.value)} />
+    <TextField sx={{width: 1}} label="market" value={search$.value} onChange={(e) => search$.next(e.target.value)} />
    </Box>
 
    <List sx={{width: '100%', bgcolor: 'background.paper'}}>
@@ -68,13 +69,25 @@ const Search = () => {
  );
 };
 
-const index: NextPage = () => {
+const Index: NextPage = () => {
+ const {enableModal} = useModal();
+
+ const onEnableModal = () => {
+  enableModal({
+   modalProps: {
+    isOpen: true,
+    children: <div>sdfsfd</div>,
+   },
+  });
+ };
+
  return (
   <Layout hasTabBar title="마켓">
    <Search />
    <Deck />
+   <button onClick={onEnableModal}>test!!</button>
   </Layout>
  );
 };
 
-export default index;
+export default Index;

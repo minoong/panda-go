@@ -3,13 +3,17 @@
 @tailwind utilities;
 
 .blog-post-content h1 {
-  @apply text-red-500 mb-5;
+ @apply text-red-500 mb-5;
 }
 
 .blog-post-content p {
-  @apply mb-1 text-gray-600;
+ @apply mb-1 text-gray-600;
 }
 
 .blog-post-content ul {
-  @apply pl-10 list-disc;
+ @apply pl-10 list-disc;
+}
+
+.toast-bottom {
+ @apply transform animate-t-in-bottom;
 }
