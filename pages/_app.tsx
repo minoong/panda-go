@@ -8,13 +8,14 @@ import Modal from '@components/commons/modal/Modal';
 import {ChainId, ThirdwebProvider} from '@thirdweb-dev/react';
 
 const activeChainId = ChainId.Rinkeby;
+const supportedChains = [4, 137];
 
 function MyApp({Component, pageProps}: AppProps) {
  console.log('APP IS RUNNING');
  return (
   <>
    <Script src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NCP_CLIENT_ID}&callback=initMap`} />
-   <ThirdwebProvider desiredChainId={activeChainId}>
+   <ThirdwebProvider desiredChainId={activeChainId} supportedChains={supportedChains}>
     <RecoilRoot>
      <SWRConfig
       value={{

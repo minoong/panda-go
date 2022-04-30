@@ -8,6 +8,6 @@ module.exports = {
   scrollRestoration: true,
  },
  images: {
-  domains: ['imagedelivery.net', 'videodelivery.net', 'localhost'],
+  domains: ['upload.wikimedia.org', 'imagedelivery.net', 'videodelivery.net', 'localhost'],
  },
 };

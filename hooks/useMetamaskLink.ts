@@ -9,6 +9,7 @@ function useMetamaskLink() {
   connectWithMetamask,
   disconnectWallet,
   address,
+  isConnected: Boolean(address),
  };
 }
 
