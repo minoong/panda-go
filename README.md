@@ -17,3 +17,4 @@
 3. 프로필 업데이트 및 토스트
 
 ![profile_update](https://user-images.githubusercontent.com/59505318/158363282-4f03bcaf-c7ca-43e7-bb5d-d5fcd5d30fd8.gif)
+
